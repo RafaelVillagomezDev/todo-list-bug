@@ -7,7 +7,7 @@ import { Request } from 'express';
 
 
 
-@UseGuards(AuthGuard)
+@UseGuards(AuthGuard)  // Guard para Rutas 
 @Controller('tasks')
 
 
@@ -22,8 +22,9 @@ export class TasksController {
     }
 
     @Get('/:id')
-    async getTask(@Param('id') id: string) {
-        return this.tasksService.getTask(id);
+    async getTask(@Param('id') idTask: string , @Req() req ) {
+        const {id} = req.user;
+        return this.tasksService.getTask(idTask,id);
     }
 
    

@@ -20,6 +20,7 @@ export class TasksService {
    
 
         try{
+
         this.logger.log(`Usuario con id : ${ownerId}`)
         // Listamos las tareas para que solo se pueda ver el detalle un usuario de sus propias tareas relacion ownerId(Task):id(User)
         const tasks = await this.tasksRepository.find({where: { ownerId: ownerId}},);
@@ -36,22 +37,34 @@ export class TasksService {
         
     }
 
-    async getTask(id: string) {
-        const task = await this.tasksRepository
+    async getTask(idTask: string ,id:string) {
+
+        try{
+            this.logger.log(`Verificamos que el  usuario ${id} tenga permisos y exista la tarea ${idTask}`)
+            const task = await this.tasksRepository
             .createQueryBuilder('task')
-            .where(`task.id = "${id}"`)
+            .where(`task.id = "${idTask}"`)
+            .andWhere(`task.ownerId = "${id}"`) // Recogemos el id del Request y lo buscamos por ownerId . 
             .getOne();
 
-        return task;
+            if (!task) {
+                throw new BadRequestException(`No se encontró una tarea con el id ${idTask} para el usuario con ownerId ${id}`);
+            }
+            this.logger.log(`Se ha encontrado la tarea ${task}`)
+            return task;
+            
+        }catch(error){
+            this.logger.error(`Error al obtener la tarea con id ${id}: ${error.message}`);
+            throw new BadRequestException(`Error al obtener la tarea ,  revise permisos: ${error.message}`);
+        }
+       
     }
  
     
     async editTask(body: UpdateTaskDto, id: string) {
-      
-     
-        this.logger.log(`Editando tarea con ID: ${body.id} para el usuario con ID: ${id}`);
     
         try {
+            this.logger.log(`Editando tarea con ID: ${body.id} para el usuario con ID: ${id}`);
           // Buscar la tarea por ID
           const task = await this.tasksRepository.findOne({ where: { id: body.id } });
     

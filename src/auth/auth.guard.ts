@@ -11,6 +11,7 @@ import { Reflector } from '@nestjs/core';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
+    
     constructor(
         private jwtService: JwtService,
         private reflector: Reflector,
@@ -22,6 +23,7 @@ export class AuthGuard implements CanActivate {
             [context.getHandler(), context.getClass()],
         );
         if (isPublic) {
+
             // 💡 See this condition
             return true;
         }
