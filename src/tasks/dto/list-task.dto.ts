@@ -4,5 +4,5 @@ export class listDto {
   // Validamos campos
   @IsString()
   @IsNotEmpty()  
-  id: string;
+  id: string; // Id Request
 }

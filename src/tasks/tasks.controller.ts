@@ -1,7 +1,10 @@
-import { Body, Controller, Get, Logger, Param, Post, UseGuards ,Req } from '@nestjs/common';
+import { Body, Controller, Get, Logger, Param, Post, UseGuards ,Req, Put, UsePipes } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { listDto } from './dto/list-task.dto';
+import { UpdateTaskDto } from './dto/edit-task.dto';
+import { Request } from 'express';
+
 
 
 @UseGuards(AuthGuard)
@@ -13,8 +16,9 @@ export class TasksController {
     private readonly logger = new Logger("TaskController");
     @Get()
     
-    async listTasks(@Req() req:listDto) {
-        return this.tasksService.listTasks(req);
+    async listTasks(@Req() req) {
+        const { id } = req.user;
+        return this.tasksService.listTasks(id);
     }
 
     @Get('/:id')
@@ -22,8 +26,10 @@ export class TasksController {
         return this.tasksService.getTask(id);
     }
 
-    @Post('/edit')
-    async editTask(@Body() body) {
-        return this.tasksService.editTask(body);
+   
+    @Put('/edit') // Es un put estamos actualizando 
+    async editTask(@Body() body:UpdateTaskDto , @Req() req) {
+        const { id } = req.user;
+        return this.tasksService.editTask(body,id);
     }
 }
