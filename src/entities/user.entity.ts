@@ -9,8 +9,8 @@ export class User {
     @Column()
     fullname: string;
 
-    @Column()
-    email: string;
+    @Column({ unique: true})
+    email: string; // Debe ser unique : así no permitimos duplicados en los email
 
     // Por motivos de simplicidad, vamos a guardar la contraseña en texto plano
     @Column()

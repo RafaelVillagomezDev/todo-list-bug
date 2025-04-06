@@ -1,13 +1,20 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Logger, Param, Post, UseGuards ,Req } from '@nestjs/common';
 import { TasksService } from './tasks.service';
+import { AuthGuard } from 'src/auth/auth.guard';
+import { listDto } from './dto/list-task.dto';
 
+
+@UseGuards(AuthGuard)
 @Controller('tasks')
+
+
 export class TasksController {
     constructor(private readonly tasksService: TasksService) {}
-
-    @Get('')
-    async listTasks() {
-        return this.tasksService.listTasks();
+    private readonly logger = new Logger("TaskController");
+    @Get()
+    
+    async listTasks(@Req() req:listDto) {
+        return this.tasksService.listTasks(req);
     }
 
     @Get('/:id')
